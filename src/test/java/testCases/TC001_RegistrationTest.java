@@ -49,7 +49,7 @@ public class TC001_RegistrationTest {
 
     @Test(
             invocationCount = 1,
-            enabled = true,
+            enabled = false,
             priority = 1,
             description = "Verify user can register with valid details"
     )

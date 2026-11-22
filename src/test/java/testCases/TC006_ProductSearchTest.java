@@ -67,7 +67,8 @@ public class TC006_ProductSearchTest {
 
 //            new code
 
-            wait.until(ExpectedConditions.visibilityOfElementLocated(searchBox)).sendKeys("iphone");
+            String searchTerm = "iphone";
+            wait.until(ExpectedConditions.visibilityOfElementLocated(searchBox)).sendKeys(searchTerm);
 
             wait.until(ExpectedConditions.elementToBeClickable(searchButton)).click();
 
@@ -82,6 +83,10 @@ public class TC006_ProductSearchTest {
                     System.out.print(productName+",");
                 }
             }
+
+//            boolean found = products.stream()
+//                    .map(WebElement::getText)
+//                    .anyMatch(name -> name.toLowerCase().contains(searchTerm.toLowerCase()));
 
             Assert.assertTrue(result, "Expected product was not found in search results.");
 

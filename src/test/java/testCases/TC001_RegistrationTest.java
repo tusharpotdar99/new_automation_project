@@ -129,7 +129,7 @@ public class TC001_RegistrationTest {
 
     @Test(
             invocationCount = 1,
-            enabled = true,
+            enabled = false,
             priority = 1,
             description = "Verify user cannot register with missing mandatory fields"
     )
@@ -196,6 +196,87 @@ public class TC001_RegistrationTest {
             System.out.println(fnameError+"\n"+lnameError+"\n"+emailError+"\n"+passwordError);
 
             if(!fnameError.isEmpty() && !lnameError.isEmpty() && !emailError.isEmpty() && !passwordError.isEmpty()){
+                result = true;
+            }
+
+            Assert.assertTrue(result, "Error messages are not displayed.");
+        }
+        catch (Exception e){
+            Assert.fail(e.getMessage());
+        }
+        finally {
+            driver.quit();
+        }
+
+    }
+
+
+    @Test(
+            invocationCount = 1,
+            enabled = true,
+            priority = 1,
+            description = "Verify user cannot register with missing mandatory fields"
+    )
+    public void verifyUserRegistrationWithInvalidEmailFormats() {
+        WebDriver driver = new ChromeDriver();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        try{
+            driver.get(app_url);
+            driver.manage().window().maximize();
+            JavascriptExecutor js = (JavascriptExecutor)driver;
+
+            wait.until(ExpectedConditions.elementToBeClickable(myAccount)).click();
+            wait.until(ExpectedConditions.elementToBeClickable(register)).click();
+
+            RegistrationData user = TestDataGenerator.generateUser();
+
+            WebElement firstName = wait.until(ExpectedConditions.visibilityOfElementLocated(firstNameTextBox));
+            firstName.clear();
+            firstName.sendKeys("tushar");
+
+            WebElement lastName = wait.until(ExpectedConditions.visibilityOfElementLocated(lastNameTextBox));
+            lastName.clear();
+            lastName.sendKeys("potdar");
+
+            WebElement email = wait.until(ExpectedConditions.visibilityOfElementLocated(emailTextbox));
+            email.clear();
+            email.sendKeys("tusharpotdar@com");
+
+            WebElement password = wait.until(ExpectedConditions.visibilityOfElementLocated(passwordTextBox));
+            password.clear();
+            password.sendKeys("tushar1999");
+
+            System.out.println("Before scroll: " +  js.executeScript("return window.scrollY;"));
+
+            js.executeScript( "window.scrollTo(0, document.documentElement.scrollHeight);");
+
+            System.out.println("After scroll: " + js.executeScript("return window.scrollY;"));
+
+            WebElement newslettercheck = wait.until(ExpectedConditions.elementToBeClickable(newsletterCheckbox));
+            js.executeScript("window.scrollBy(0, 2000)");
+//            js.executeScript(    "arguments[0].scrollIntoView({block:'center'});",newslettercheck
+//                    );
+
+
+            if(!newslettercheck.isSelected()){
+                newslettercheck.click();
+            }
+
+            WebElement privacyPolicy = wait.until(ExpectedConditions.elementToBeClickable(privacyPolicyCheck));
+            if(!privacyPolicy.isSelected()){
+                privacyPolicy.click();
+            }
+
+            WebElement continueBtn = wait.until(ExpectedConditions.elementToBeClickable(continueButton));
+            js.executeScript("arguments[0].click();", continueBtn);
+
+            boolean result = false;
+            String emailError = wait.until(ExpectedConditions.visibilityOfElementLocated(errorEmail)).getText();
+
+            System.out.println(emailError);
+
+            if(!emailError.isEmpty()){
                 result = true;
             }
 

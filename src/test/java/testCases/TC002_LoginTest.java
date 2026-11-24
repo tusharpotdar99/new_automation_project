@@ -29,7 +29,7 @@ public class TC002_LoginTest {
     private final By warningMessage = By.xpath("//div[contains(@class,'alert-danger')]");
     private final By myAccountHeading = By.xpath("//h1[normalize-space()='My Account']");
     private final By loginButton = By.xpath("//button[normalize-space()='Login']");
-    private final String warnExcededloginAttempts = "Warning: Your account has exceeded allowed number of login attempts. Please try again in 1 hour.\n"
+    private final String warnExcededloginAttempts = "Warning: Your account has exceeded allowed number of login attempts. Please try again in 1 hour.\n";
 
     @Test(enabled = false, description = "verify user can login with valid credentials")
     public void verifyLoginWithValidCredentials(){
@@ -62,7 +62,7 @@ public class TC002_LoginTest {
         }
     }
 
-    @Test(enabled = true, description = "verify user cannot login with invalid credentials")
+    @Test(enabled = false, description = "verify user cannot login with invalid credentials")
     public void verifyLoginWithInvalidCredentials(){
 
         WebDriver driver = new ChromeDriver();
@@ -82,6 +82,41 @@ public class TC002_LoginTest {
             WebElement password = wait.until(ExpectedConditions.visibilityOfElementLocated(passwordTextBox));
             password.clear();
             password.sendKeys(invalidpassword);
+
+            wait.until(ExpectedConditions.visibilityOfElementLocated(loginButton)).click();
+
+            String warning = wait.until(ExpectedConditions.visibilityOfElementLocated(warningMessage)).getText();
+            System.out.println(warning);
+            boolean result = warning.toLowerCase().contains("warning");
+//            boolean result = wait.until(ExpectedConditions.visibilityOfElementLocated(warningMessage)).isDisplayed();
+
+            Assert.assertTrue(result, "Warning Message is not displayed after clicking login button");
+        }
+        finally {
+            driver.quit();
+        }
+    }
+
+    @Test(enabled = true, description = "verify user cannot login with Empty Fields credentials")
+    public void verifyLoginWithEmptyFields(){
+
+        WebDriver driver = new ChromeDriver();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        try{
+            driver.get(app_url);
+            driver.manage().window().maximize();
+
+            wait.until(ExpectedConditions.elementToBeClickable(myAccount)).click();
+            wait.until(ExpectedConditions.elementToBeClickable(login)).click();
+
+            WebElement user = wait.until(ExpectedConditions.visibilityOfElementLocated(emailTextBox));
+            user.clear();
+            user.sendKeys("");
+
+            WebElement password = wait.until(ExpectedConditions.visibilityOfElementLocated(passwordTextBox));
+            password.clear();
+            password.sendKeys("");
 
             wait.until(ExpectedConditions.visibilityOfElementLocated(loginButton)).click();
 

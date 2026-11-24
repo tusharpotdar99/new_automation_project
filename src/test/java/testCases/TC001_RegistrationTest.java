@@ -47,13 +47,19 @@ public class TC001_RegistrationTest {
     private final By successMessage =
             By.xpath("//div[@id='content']/p[1]");
 
+    private final By errorFirstName = By.xpath("//div[@id='error-firstname']");
+    private final By errorLastName = By.xpath("//div[@id='error-lastname']");
+    private final By errorEmail = By.xpath("//div[@id='error-email']");
+    private final By errorPassoword = By.xpath("//div[@id='error-password']");
+    private final By warningPrivacyPolicyUnchecked = By.xpath("//div[@id='alert']");
+
     @Test(
             invocationCount = 1,
             enabled = false,
             priority = 1,
             description = "Verify user can register with valid details"
     )
-    public void verifyUserRegistration() {
+    public void verifyUserRegistrationWithValidData() {
         WebDriver driver = new ChromeDriver();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -111,6 +117,89 @@ public class TC001_RegistrationTest {
 
             boolean result = pageHeadings.getText().contains("Your Account Has Been Created!");
             Assert.assertTrue(result, "Account is not created.");
+        }
+        catch (Exception e){
+            Assert.fail(e.getMessage());
+        }
+        finally {
+            driver.quit();
+        }
+
+    }
+
+    @Test(
+            invocationCount = 1,
+            enabled = true,
+            priority = 1,
+            description = "Verify user cannot register with missing mandatory fields"
+    )
+    public void verifyUserRegistrationWithMissingMandatoryFields() {
+        WebDriver driver = new ChromeDriver();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        try{
+            driver.get(app_url);
+            driver.manage().window().maximize();
+            JavascriptExecutor js = (JavascriptExecutor)driver;
+
+            wait.until(ExpectedConditions.elementToBeClickable(myAccount)).click();
+            wait.until(ExpectedConditions.elementToBeClickable(register)).click();
+
+            RegistrationData user = TestDataGenerator.generateUser();
+
+            WebElement firstName = wait.until(ExpectedConditions.visibilityOfElementLocated(firstNameTextBox));
+            firstName.clear();
+            firstName.sendKeys("");
+
+            WebElement lastName = wait.until(ExpectedConditions.visibilityOfElementLocated(lastNameTextBox));
+            lastName.clear();
+            lastName.sendKeys("");
+
+            WebElement email = wait.until(ExpectedConditions.visibilityOfElementLocated(emailTextbox));
+            email.clear();
+            email.sendKeys("");
+
+            WebElement password = wait.until(ExpectedConditions.visibilityOfElementLocated(passwordTextBox));
+            password.clear();
+            password.sendKeys("");
+
+            System.out.println("Before scroll: " +  js.executeScript("return window.scrollY;"));
+
+            js.executeScript( "window.scrollTo(0, document.documentElement.scrollHeight);");
+
+            System.out.println("After scroll: " + js.executeScript("return window.scrollY;"));
+
+            WebElement newslettercheck = wait.until(ExpectedConditions.elementToBeClickable(newsletterCheckbox));
+            js.executeScript("window.scrollBy(0, 2000)");
+//            js.executeScript(    "arguments[0].scrollIntoView({block:'center'});",newslettercheck
+//                    );
+
+
+            if(!newslettercheck.isSelected()){
+                newslettercheck.click();
+            }
+
+            WebElement privacyPolicy = wait.until(ExpectedConditions.elementToBeClickable(privacyPolicyCheck));
+            if(!privacyPolicy.isSelected()){
+                privacyPolicy.click();
+            }
+
+            WebElement continueBtn = wait.until(ExpectedConditions.elementToBeClickable(continueButton));
+            js.executeScript("arguments[0].click();", continueBtn);
+
+            boolean result = false;
+            String fnameError = wait.until(ExpectedConditions.visibilityOfElementLocated(errorFirstName)).getText();
+            String lnameError = wait.until(ExpectedConditions.visibilityOfElementLocated(errorLastName)).getText();
+            String emailError = wait.until(ExpectedConditions.visibilityOfElementLocated(errorEmail)).getText();
+            String passwordError = wait.until(ExpectedConditions.visibilityOfElementLocated(errorPassoword)).getText();
+
+            System.out.println(fnameError+"\n"+lnameError+"\n"+emailError+"\n"+passwordError);
+
+            if(!fnameError.isEmpty() && !lnameError.isEmpty() && !emailError.isEmpty() && !passwordError.isEmpty()){
+                result = true;
+            }
+
+            Assert.assertTrue(result, "Error messages are not displayed.");
         }
         catch (Exception e){
             Assert.fail(e.getMessage());

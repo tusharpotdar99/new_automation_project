@@ -60,14 +60,12 @@ public class TC001_RegistrationTest {
         try{
             driver.get(app_url);
             driver.manage().window().maximize();
+            JavascriptExecutor js = (JavascriptExecutor)driver;
 
             wait.until(ExpectedConditions.elementToBeClickable(myAccount)).click();
             wait.until(ExpectedConditions.elementToBeClickable(register)).click();
 
-            JavascriptExecutor js = (JavascriptExecutor)driver;
-
             RegistrationData user = TestDataGenerator.generateUser();
-
 
             WebElement firstName = wait.until(ExpectedConditions.visibilityOfElementLocated(firstNameTextBox));
             firstName.clear();
@@ -85,15 +83,11 @@ public class TC001_RegistrationTest {
             password.clear();
             password.sendKeys(user.getPassword());
 
-            System.out.println("Before scroll: " +
-                    js.executeScript("return window.scrollY;"));
+            System.out.println("Before scroll: " +  js.executeScript("return window.scrollY;"));
 
-            js.executeScript(
-                    "window.scrollTo(0, document.documentElement.scrollHeight);"
-            );
+            js.executeScript( "window.scrollTo(0, document.documentElement.scrollHeight);");
 
-            System.out.println("After scroll: " +
-                    js.executeScript("return window.scrollY;"));
+            System.out.println("After scroll: " + js.executeScript("return window.scrollY;"));
 
             WebElement newslettercheck = wait.until(ExpectedConditions.elementToBeClickable(newsletterCheckbox));
 //            js.executeScript("window.scrollBy(0, 2000)");

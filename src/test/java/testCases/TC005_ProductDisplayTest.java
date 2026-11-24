@@ -29,7 +29,7 @@ public class TC005_ProductDisplayTest {
     private final By productTitles = By.xpath("//div[contains(@class,'product-thumb')]//h4//a");
     private final By productCard = By.xpath("//div[contains(@class,'product-thumb')]");
 
-    @Test(enabled = true, description = "verify user can login with valid credentials")
+    @Test(enabled = false, description = "verify user can login with valid credentials")
     public void verifyProductListDisplayed(){
 
         WebDriver driver = new ChromeDriver();

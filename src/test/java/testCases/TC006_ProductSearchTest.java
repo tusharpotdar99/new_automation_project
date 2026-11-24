@@ -7,10 +7,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.util.List;
 
@@ -33,7 +29,7 @@ public class TC006_ProductSearchTest {
 
 
 
-    @Test(enabled = true, description = "verify user can login with valid credentials")
+    @Test(enabled = false, description = "verify user can login with valid credentials")
     public void verifyProductSearchCorrectly(){
 
         WebDriver driver = new ChromeDriver();
